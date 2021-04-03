@@ -33,35 +33,39 @@ namespace QuanLyFile.Controllers
         {
             var code = Guid.NewGuid().ToString();
             var fileimg = Path.GetFileName(file.FileName);
-            int sizeResize = 200;
 
             var pa = Path.Combine(Server.MapPath("~/IMG/Img"), code + fileimg);
 
 
-            SaveResizeImage(Image.FromStream(file.InputStream), sizeResize, pa);
+           
 
 
             return RedirectToAction("TestAnh");
         }
-        public bool SaveResizeImage(Image img, int width, string path)
+        public bool SaveResizeImage(Image img, string path, int xm0, int ym0, int xm1, int ym1)
         {
             try
             {
+
+                // toa do -- tu lay roi gan vao
+                int x0 = xm0 - 5; // toa do cat + tang do rong them 5
+                int y0 = ym0 - 5;
+                int x1 = xm1 + 5;
+                int y1 = ym1 + 5;
+
+
                 // lấy chiều rộng và chiều cao ban đầu của ảnh
                 int originalW = img.Width;
                 int originalH = img.Height;
 
-                RectangleF srcRect = new RectangleF(1104, 499, originalW, originalH);
+                RectangleF srcRect = new RectangleF(x0, y0, x1 - x0, y1 - y0);
                 GraphicsUnit units = GraphicsUnit.Pixel;
+
 
                 Bitmap b = new Bitmap(originalW, originalH);
                 Graphics g = Graphics.FromImage((Image)b);
                 g.InterpolationMode = InterpolationMode.Bicubic;    // Specify here
-                g.DrawImage(img, 1104, 499, srcRect, units);
-
-
-
-
+                g.DrawImage(img, x0, y0, srcRect, units);
                 g.Dispose();
                 b.Save(path);
                 return true;
@@ -85,8 +89,14 @@ namespace QuanLyFile.Controllers
             var code = Session["key"];
             FileMain file = db.FileMains.SingleOrDefault(n => n.file_key == code.ToString());
 
-            for(var i = 0; i < price.Length - 1; i++)
+            Image img = Image.FromFile(Request.MapPath("~/IMG/img/" + file.file_img));
+            
+
+            for (var i = 0; i < price.Length - 1; i++)
             {
+                var codekey = Guid.NewGuid().ToString();
+                var pa = Path.Combine(Server.MapPath("~/IMG/Img"), codekey + ".png");
+                SaveResizeImage(img, pa, x0[i], y0[i], x1[i], y1[i]);
                 ItemMain itemMain = new ItemMain
                 {
                     item_mvo = price[i],
@@ -96,7 +106,12 @@ namespace QuanLyFile.Controllers
                     item_x0 = x0[i],
                     item_y0 = y0[i],
                     item_x1 = x1[i],
-                    item_y1 = y1[i]
+                    item_y1 = y1[i],
+                    table_id = 1,
+                    item_watched = false,
+                    notSee = false,
+                    item_mvi = price[i],
+                    item_img = codekey + ".png"
                 };
                 db.ItemMains.Add(itemMain);
             }
@@ -141,9 +156,25 @@ namespace QuanLyFile.Controllers
                 }
             }
         }
-        public string img()
+        public JsonResult IndexDetails(int ? id)
         {
-            return "aa";
+            var list = from item in db.ItemMains
+                                  where item.file_id == id
+                                  select new
+                                  {
+                                      target = item.item_name,
+                                      code = item.item_code,
+                                      V1 = item.item_mvi,
+                                      V0 = item.item_mvo,
+                                      color = item.item_pro,
+                                      watched = item.item_watched,
+                                      notSee = item.notSee,
+                                      filecir = item.FileMain.file_circular,
+                                      form = item.FileMain.file_form,
+                                      table = item.table_id,
+                                      img = "/IMG/img/" + item.item_img
+                                  };
+            return Json(list, JsonRequestBehavior.AllowGet);
         }
     }
 }

@@ -146,7 +146,7 @@
                     }
                     console.log(arrall);
 
-                    //Count text 
+                    //Count text
                     for (var i = 0; i < arrall.length; i++) {
                         arrone.push(arrall[i].words);
                     }
@@ -159,18 +159,18 @@
                             if (arrone[i][j].text.match(moneyRegex) != null) {
                                 arrnumber.push(arrone[i][j].text.match(moneyRegex));
                                 confidence.push(arrone[i][j].confidence);
-                                x0.push(arrone[i][j].baseline.x0);
-                                y0.push(arrone[i][j].baseline.y0);
-                                x1.push(arrone[i][j].baseline.x1);
-                                y1.push(arrone[i][j].baseline.y1);
+                                x0.push(arrone[i][j].bbox.x0);
+                                y0.push(arrone[i][j].bbox.y0);
+                                x1.push(arrone[i][j].bbox.x1);
+                                y1.push(arrone[i][j].bbox.y1);
                             }
                             else if (arrone[i][j].text.match(lineRegex) != null) {
                                 arrnumber.push(arrone[i][j].text.match(lineRegex));
                                 confidence.push(arrone[i][j].confidence);
-                                x0.push(arrone[i][j].baseline.x0);
-                                y0.push(arrone[i][j].baseline.y0);
-                                x1.push(arrone[i][j].baseline.x1);
-                                y1.push(arrone[i][j].baseline.y1);
+                                x0.push(arrone[i][j].bbox.x0);
+                                y0.push(arrone[i][j].bbox.y0);
+                                x1.push(arrone[i][j].bbox.x1);
+                                y1.push(arrone[i][j].bbox.y1);
                             }
                         }
                     }
@@ -203,6 +203,10 @@
                         .then(response => response.json())
                         .then(data => (this.totalVuePackages = data.total));
 
+
+                    setTimeout(function () {
+                        window.location.href = "/Read/Details?id=@Model.file_id";
+                    }, 2000);
 
                 }
             }

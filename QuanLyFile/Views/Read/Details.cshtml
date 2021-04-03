@@ -8,28 +8,52 @@
 @{
     List<ItemMain> itemMains = db.ItemMains.ToList();
 }
-<link href="~/Content/element.css" rel="stylesheet" />
 <script src="~/Scripts/bootstrap.min.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 <!-- Projects table -->
+
+<link href="~/Content/element.css" rel="stylesheet" />
 <script src="//unpkg.com/vue/dist/vue.js"></script>
 <script src="//unpkg.com/element-ui@2.15.1/lib/index.js"></script>
 <div class="row">
     <div class="col-xl-8">
-        <div class="card">
-            <div class="card-header border-0">
-                <div class="row align-items-center">
-                    <div class="col">
-                        <h3 class="mb-0"></h3>
-                    </div>
-                </div>
-            </div>
-            <div id="app">
+        <div class="card" style="border-radius: 0px 0px 0px 0px">
+            <div id="app" style="padding: 10px">
                 <template>
                     <el-tabs v-model="activeName" v:on-click="handleClick">
-                        <el-tab-pane label="User" name="first">User</el-tab-pane>
-                        <el-tab-pane label="Config" name="second">Config</el-tab-pane>
-                        <el-tab-pane label="Role" name="third">Role</el-tab-pane>
-                        <el-tab-pane label="Task" name="fourth">Task</el-tab-pane>
+                        <el-tab-pane label="Báo cáo cân đối kế toán" name="first">
+                            <template>
+                                <el-table :data="tableData"
+                                          height="800px"
+                                          style="width: 100%">
+                                    <el-table-column prop="target"
+                                                     label="Chỉ tiêu"
+                                                     width="400">
+                                    </el-table-column>
+                                    <el-table-column prop="target"
+                                                     label="Mã số"
+                                                     width="180">
+                                    </el-table-column>
+                                    <el-table-column prop="V1"
+                                                     label="Số cuối năm (V1)"
+                                                     width="180">
+                                    </el-table-column>
+                                    <el-table-column prop="V0"
+                                                     label="Số cuối năm đọc được (V0)"
+                                                     width="">
+                                    </el-table-column>
+                                    <el-table-column prop="img"
+                                                     label="Ảnh đọc được"
+                                                     width="">
+                                        <template slot-scope="scope">
+                                            <el-image :src="scope.row.img" :preview-src-list="[scope.row.img]" style="width: 100%">
+                                        </template>
+                                    </el-table-column>
+                                </el-table>
+                            </template>
+                        </el-tab-pane>
+                        <el-tab-pane label="Báo cáo kết quả hoạt động kinh doanh" name="second">Config</el-tab-pane>
+                        <el-tab-pane label="Báo cáo lưu chuyển tiền tệ" name="role">Role</el-tab-pane>
                     </el-tabs>
                 </template>
             </div>
@@ -55,13 +79,24 @@
     var Main = {
         data() {
             return {
-                activeName: 'first'
+                activeName: 'first',
+                tableData: []
             };
         },
         methods: {
             handleClick(tab, event) {
                 console.log(tab, event);
             }
+        },
+        mounted: function () {
+            axios.get('/Read/IndexDetails?id=@Model.file_id')
+                .then(response => {
+                    this.tableData = response.data;
+                })
+                .catch(error => {
+                    console.log(error);
+                })
+
         }
     };
     var Ctor = Vue.extend(Main)
