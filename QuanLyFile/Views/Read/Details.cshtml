@@ -1,0 +1,50 @@
+﻿@using Model.EF;
+@model FileMain
+@{
+    DATAOCREntities db = new DATAOCREntities();
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@{ 
+    List<ItemMain> itemMains = db.ItemMains.ToList();
+}
+<div class="row">
+    <div class="col-xl-6">
+        <div class="card">
+            <div class="card-header border-0">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <h3 class="mb-0"></h3>
+                    </div>
+                </div>
+            </div>
+            <div class="">
+                <!-- Projects table -->
+                <table class="table">
+                    @foreach (var item in itemMains.Where(n => n.file_id == Model.file_id).OrderByDescending(n=>n.item_datecreate))
+                    {
+                        <tr>
+                            @item.item_mvo <br />
+                        </tr>
+                    }
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-6">
+        <div class="card">
+            <div class="card-header border-0">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <h3 class="mb-0"></h3>
+                    </div>
+                </div>
+            </div>
+            <div class="">
+                <!-- Projects table -->
+
+            </div>
+        </div>
+    </div>
+</div>
+

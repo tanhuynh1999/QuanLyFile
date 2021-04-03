@@ -1,0 +1,75 @@
+﻿@model Model.EF.FileMain
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>FileMain</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.file_circular)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.file_circular)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.file_form)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.file_form)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.file_startday)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.file_startday)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.file_endday)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.file_endday)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.file_datecreate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.file_datecreate)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.file_status)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.file_status)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.file_key)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.file_key)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.file_id }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>
