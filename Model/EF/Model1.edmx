@@ -43,6 +43,8 @@
           <Property Name="item_y0" Type="int" />
           <Property Name="item_x1" Type="int" />
           <Property Name="item_y1" Type="int" />
+          <Property Name="item_target" Type="nvarchar(max)" />
+          <Property Name="item_codeitem" Type="varchar(max)" />
         </EntityType>
         <EntityType Name="sysdiagrams">
           <Key>
@@ -144,6 +146,8 @@
           <Property Name="item_y0" Type="Int32" />
           <Property Name="item_x1" Type="Int32" />
           <Property Name="item_y1" Type="Int32" />
+          <Property Name="item_target" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="item_codeitem" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
         </EntityType>
         <EntityType Name="sysdiagram">
           <Key>
@@ -226,6 +230,8 @@
           <EntitySetMapping Name="ItemMains">
             <EntityTypeMapping TypeName="DATAOCRModel.ItemMain">
               <MappingFragment StoreEntitySet="ItemMain">
+                <ScalarProperty Name="item_codeitem" ColumnName="item_codeitem" />
+                <ScalarProperty Name="item_target" ColumnName="item_target" />
                 <ScalarProperty Name="item_y1" ColumnName="item_y1" />
                 <ScalarProperty Name="item_x1" ColumnName="item_x1" />
                 <ScalarProperty Name="item_y0" ColumnName="item_y0" />

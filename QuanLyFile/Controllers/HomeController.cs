@@ -30,5 +30,9 @@ namespace QuanLyFile.Controllers
 
             return View();
         }
+        public PartialViewResult Test()
+        {
+            return PartialView();
+        }
     }
 }

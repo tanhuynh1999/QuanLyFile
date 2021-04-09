@@ -33,6 +33,8 @@ namespace Model.EF
         public Nullable<int> item_y0 { get; set; }
         public Nullable<int> item_x1 { get; set; }
         public Nullable<int> item_y1 { get; set; }
+        public string item_target { get; set; }
+        public string item_codeitem { get; set; }
     
         public virtual FileMain FileMain { get; set; }
         public virtual TableMain TableMain { get; set; }

@@ -36,13 +36,9 @@ namespace QuanLyFile.Controllers
 
             var pa = Path.Combine(Server.MapPath("~/IMG/Img"), code + fileimg);
 
-
-           
-
-
             return RedirectToAction("TestAnh");
         }
-        public bool SaveResizeImage(Image img, string path, int xm0, int ym0, int xm1, int ym1)
+        public bool SaveResizeImage(string img, string path, int xm0, int ym0, int xm1, int ym1)
         {
             try
             {
@@ -53,21 +49,24 @@ namespace QuanLyFile.Controllers
                 int x1 = xm1 + 5;
                 int y1 = ym1 + 5;
 
+                int w = x1 - x0;
+                int h = y1 - y0;
 
-                // lấy chiều rộng và chiều cao ban đầu của ảnh
-                int originalW = img.Width;
-                int originalH = img.Height;
+                // Create a new image at the cropped size
+                Bitmap cropped = new Bitmap(w, h);
 
-                RectangleF srcRect = new RectangleF(x0, y0, x1 - x0, y1 - y0);
-                GraphicsUnit units = GraphicsUnit.Pixel;
-
-
-                Bitmap b = new Bitmap(originalW, originalH);
-                Graphics g = Graphics.FromImage((Image)b);
-                g.InterpolationMode = InterpolationMode.Bicubic;    // Specify here
-                g.DrawImage(img, x0, y0, srcRect, units);
-                g.Dispose();
-                b.Save(path);
+                //Load image from file
+                using (Image image = Image.FromFile(Request.MapPath("~/IMG/img/" + img)))
+                {
+                    // Create a Graphics object to do the drawing, *with the new bitmap as the target*
+                    using (Graphics g = Graphics.FromImage(cropped))
+                    {
+                        // Draw the desired area of the original into the graphics object
+                        g.DrawImage(image, new Rectangle(0, 0, w, h), new Rectangle(x0, y0, w, h), GraphicsUnit.Pixel);
+                        // Save the result
+                        cropped.Save(path);
+                    }
+                }
                 return true;
             }
             catch (Exception e)
@@ -84,7 +83,7 @@ namespace QuanLyFile.Controllers
             return View(db.FileMains.Find(file.file_id));
         }
         //Hàm lưu item
-        public JsonResult CreateItem(string[] price, string [] confidence, int[] x0, int[] y0, int[] x1, int[] y1)
+        public JsonResult CreateItem(string[] price, string [] confidence, int[] x0, int[] y0, int[] x1, int[] y1, object[] target, string[] itemcode)
         {
             var code = Session["key"];
             FileMain file = db.FileMains.SingleOrDefault(n => n.file_key == code.ToString());
@@ -96,7 +95,7 @@ namespace QuanLyFile.Controllers
             {
                 var codekey = Guid.NewGuid().ToString();
                 var pa = Path.Combine(Server.MapPath("~/IMG/Img"), codekey + ".png");
-                SaveResizeImage(img, pa, x0[i], y0[i], x1[i], y1[i]);
+                SaveResizeImage(file.file_img, pa, x0[i], y0[i], x1[i], y1[i]);
                 ItemMain itemMain = new ItemMain
                 {
                     item_mvo = price[i],
@@ -111,7 +110,9 @@ namespace QuanLyFile.Controllers
                     item_watched = false,
                     notSee = false,
                     item_mvi = price[i],
-                    item_img = codekey + ".png"
+                    item_img = codekey + ".png",
+                    item_target = (string)target[i],
+                    item_codeitem = itemcode[i]
                 };
                 db.ItemMains.Add(itemMain);
             }
@@ -162,8 +163,8 @@ namespace QuanLyFile.Controllers
                                   where item.file_id == id
                                   select new
                                   {
-                                      target = item.item_name,
-                                      code = item.item_code,
+                                      target = item.item_target,
+                                      code = item.item_codeitem,
                                       V1 = item.item_mvi,
                                       V0 = item.item_mvo,
                                       color = item.item_pro,
@@ -172,9 +173,15 @@ namespace QuanLyFile.Controllers
                                       filecir = item.FileMain.file_circular,
                                       form = item.FileMain.file_form,
                                       table = item.table_id,
-                                      img = "/IMG/img/" + item.item_img
+                                      img = "/IMG/img/" + item.item_img,
+                                      id_category = "accounting-133"
+
                                   };
             return Json(list, JsonRequestBehavior.AllowGet);
+        }
+        public ActionResult ChangeVertion(int ? id)
+        {
+            return View(db.FileMains.Find(id));
         }
     }
 }
